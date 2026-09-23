@@ -1,9 +1,10 @@
 {
 	"servers": {
-		"langchain-docs": {
-			"url": "https://docs.langchain.com/mcp",
-			"type": "http"
+		"docs-langchain": {
+			"url": "https://docs.langchain.com/mcp"
+		},
+		"reference-langchain": {
+			"url": "https://reference.langchain.com/mcp"
 		}
-	},
-	"inputs": []
+	}
 }
