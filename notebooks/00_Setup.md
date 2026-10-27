@@ -36,3 +36,8 @@
 - after the above command 'python -V' should work if you were using 'python3'
 - python -m pip install --upgrade pip
 - python -m pip install -r ./requirements.txt
+
+
+python -m pip install seaborn
+
+python -m pip freeze > requirements.txt

@@ -6,3 +6,6 @@ npm-debug.log
 .my-code
 
 notebooks/cache
+notebooks/Prompt Engineering/10b_Solutions.ipynb
+
+.env
