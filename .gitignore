@@ -7,5 +7,7 @@ npm-debug.log
 
 notebooks/cache
 notebooks/Prompt Engineering/10b_Solutions.ipynb
+notebooks/Prompt Engineering/06b_Agents_Solutions.ipynb
+
 
 .env
