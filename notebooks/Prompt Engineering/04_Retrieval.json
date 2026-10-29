@@ -1,0 +1,361 @@
+{
+    "name": "Lyrics RAG: index and ask",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## Lyrics RAG demo\nStep 1: upload kdot.txt in the form to build the lyrics index.\nStep 2: open the chat and ask a question about the lyrics.\nRe-run step 1 if you change the file.",
+          "height": 272,
+          "width": 352
+        },
+        "id": "b34a4bf4-59ee-4328-956b-a2edd87bb853",
+        "name": "Sticky Note 3db4a943",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -464,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "memoryKey": {
+            "__rl": true,
+            "mode": "id",
+            "value": "kdot_lyrics"
+          },
+          "clearStore": true
+        },
+        "id": "a38c2e4c-5ba3-4073-b15c-299c962d4cc6",
+        "name": "Store lyric vectors",
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+        "typeVersion": 1.3,
+        "position": [
+          448,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "model": "=openai/text-embedding-3-small",
+          "options": {}
+        },
+        "id": "cd3b4ed7-b8ce-4d1f-ab0a-6f7814137e23",
+        "name": "Embed lyrics (OpenRouter)",
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          464,
+          224
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "UjupvaIKjzlLUiYS",
+            "name": "OpenAI account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "dataType": "binary",
+          "loader": "textLoader",
+          "textSplittingMode": "custom",
+          "options": {}
+        },
+        "id": "b8dd5d61-dea6-4c27-a8e4-237af74c666c",
+        "name": "Load file text",
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1.1,
+        "position": [
+          592,
+          224
+        ]
+      },
+      {
+        "parameters": {
+          "chunkOverlap": 50,
+          "options": {}
+        },
+        "id": "d13bbf35-c96e-42ff-8142-6266d349aa04",
+        "name": "Split into chunks",
+        "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          592,
+          432
+        ]
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "You answer questions about the Kendrick Lamar lyrics. Always call the Search lyrics tool before answering. Base your answer only on the passages it returns. If the passages do not answer the question, say you do not know. Keep answers to three sentences and quote short phrases from the lyrics where helpful."
+          }
+        },
+        "id": "dda67aba-52f0-411e-9274-eaf3e30cb2ab",
+        "name": "Lyrics assistant",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          288,
+          848
+        ]
+      },
+      {
+        "parameters": {
+          "model": "openai/gpt-6-luna",
+          "options": {
+            "temperature": 0
+          }
+        },
+        "id": "bdc79c64-d7e0-4660-886e-18257628dc0b",
+        "name": "OpenRouter chat model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          224,
+          1072
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "kXZCAKI2OL1oBDpC",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "id": "95e5d993-9060-4b52-9afc-4ec79d207673",
+        "name": "Chat memory",
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.4,
+        "position": [
+          352,
+          1072
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Searches the Kendrick Lamar lyrics for passages related to a question. Use it for every question about the lyrics.",
+          "memoryKey": {
+            "__rl": true,
+            "mode": "id",
+            "value": "kdot_lyrics"
+          }
+        },
+        "id": "d37a8894-48a3-4fa2-bc53-16979fc8b2d4",
+        "name": "Search lyrics",
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+        "typeVersion": 1.3,
+        "position": [
+          480,
+          1072
+        ]
+      },
+      {
+        "parameters": {
+          "model": "=openai/text-embedding-3-small",
+          "options": {}
+        },
+        "id": "7b41ed7b-a40c-449a-9eb5-3fa8b0cfbf92",
+        "name": "Embed question (OpenRouter)",
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          480,
+          1280
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "UjupvaIKjzlLUiYS",
+            "name": "OpenAI account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "formTitle": "Upload the lyrics file",
+          "formDescription": "Upload kdot.txt to build the lyrics index. Then open the chat and ask a question.",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Lyrics file (kdot.txt)",
+                "fieldType": "file",
+                "fieldName": "data",
+                "multipleFiles": false,
+                "acceptFileTypes": ".txt",
+                "requiredField": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "e016ef69-48bd-45b8-801e-3ecf5158a65b",
+        "name": "Upload kdot.txt",
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.6,
+        "position": [
+          0,
+          208
+        ],
+        "webhookId": "f092df79-6f27-47aa-bfce-ad5955917513"
+      },
+      {
+        "parameters": {
+          "options": {
+            "responseMode": "streaming"
+          }
+        },
+        "id": "fd00be89-7daa-44b0-b50b-a8818dc98584",
+        "name": "Chat",
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.5,
+        "position": [
+          0,
+          848
+        ],
+        "webhookId": "82abc683-f2d2-4652-9377-533804761f72"
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "Embed lyrics (OpenRouter)": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Store lyric vectors",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Load file text": {
+        "ai_document": [
+          [
+            {
+              "node": "Store lyric vectors",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split into chunks": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Load file text",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter chat model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Lyrics assistant",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Chat memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Lyrics assistant",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search lyrics": {
+        "ai_tool": [
+          [
+            {
+              "node": "Lyrics assistant",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embed question (OpenRouter)": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Search lyrics",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload kdot.txt": {
+        "main": [
+          [
+            {
+              "node": "Store lyric vectors",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Chat": {
+        "main": [
+          [
+            {
+              "node": "Lyrics assistant",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate",
+      "availableInMCP": true
+    },
+    "versionId": "034c29b9-d3be-44f3-bd2c-f584810d0259",
+    "meta": {
+      "aiBuilderAssisted": true,
+      "builderVariant": "mcp",
+      "instanceId": "b1354a8506940cb1cce71ea5caac8fe8321cb5744365d1a79990bd53808e1d60"
+    },
+    "nodeGroups": [
+      {
+        "id": "cd8aa192-ef51-4877-922b-a9468f129c1c",
+        "name": "Build the lyrics index",
+        "nodeIds": [
+          "a38c2e4c-5ba3-4073-b15c-299c962d4cc6",
+          "cd3b4ed7-b8ce-4d1f-ab0a-6f7814137e23",
+          "b8dd5d61-dea6-4c27-a8e4-237af74c666c",
+          "d13bbf35-c96e-42ff-8142-6266d349aa04"
+        ],
+        "description": "Takes the uploaded kdot.txt, splits it into chunks, and stores a vector for each chunk. Upload it once first."
+      },
+      {
+        "id": "f0bd9489-9a4e-469a-acb6-d6ceba26c8bc",
+        "name": "Answer lyric questions",
+        "nodeIds": [
+          "dda67aba-52f0-411e-9274-eaf3e30cb2ab",
+          "bdc79c64-d7e0-4660-886e-18257628dc0b",
+          "95e5d993-9060-4b52-9afc-4ec79d207673",
+          "d37a8894-48a3-4fa2-bc53-16979fc8b2d4",
+          "7b41ed7b-a40c-449a-9eb5-3fa8b0cfbf92"
+        ],
+        "description": "Searches the lyrics for each question, then answers from what it finds, remembering the chat so far."
+      }
+    ],
+    "id": "J3FXMSmu18L6t8W0",
+    "tags": []
+  }

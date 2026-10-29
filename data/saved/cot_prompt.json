@@ -8,7 +8,7 @@
     "partial_variables": {},
     "metadata": null,
     "tags": null,
-    "template": "You are an insightful question answering bot. A user will submitquestions, which are delimited by triple backticks, and you should respond inan insighful manner.\n\nQuestion: ```{question}```\n\nThink step by step before answering.\n\nAnswer:\n",
+    "template": "You are an insightful question answering bot. A user will submit questions, which are delimited by triple backticks, and you should respond in an insightful manner.\n\nQuestion: ```{question}```\n\nThink step by step before answering.\n\nAnswer:\n",
     "template_format": "f-string",
     "validate_template": false,
     "_type": "prompt"
