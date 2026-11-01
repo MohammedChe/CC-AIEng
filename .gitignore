@@ -15,4 +15,6 @@ notebooks/Context Engineering/*
 apps/kdotChat/.faiss_cache
 __pycache__
 
+.cursor
+
 .env
